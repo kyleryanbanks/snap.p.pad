@@ -2,3 +2,5 @@
 SNAPpPad.sublime-project
 SNAPpPad.sublime-workspace
 Vagrantfile
+*.sublime-project
+*.sublime-workspace
