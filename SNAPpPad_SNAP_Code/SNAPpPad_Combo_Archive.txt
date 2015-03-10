@@ -1,0 +1,208 @@
+Timing_Test = ((Nox, Dx, 1), (Nox, DLx, 1), (Nox, Lx, 1), (Nox, ULx, 1), (Nox, Ux, 1), 
+               (Nox, URx, 1), (Nox, Rx, 1), (Nox, DRx, 1), (Nox, Dx, 1), (P1x, Nox, 1),
+               (Nox, Nox, 0))
+
+GB_Throw = ((Nox, ULx, 90), (Nox, Dx, 1), (Nox, DLx, 1), (Nox, Lx, 1), (P1x, Lx, 1),
+            (P1x & P2x & P3x, ULx, 1), Endx)
+
+Perfect_DL_MB = ((Nox, Dx, 3),(Nox, URx, 11), (Nox, Ux, 1),(Nox, URx, 1),(Nox, Rx, 1), (P23x, DLx, 5),
+                 (P1x, Nox, 14), (Nox, Dx, 3),(Nox, URx, 11), (Nox, Ux, 1),(Nox, URx, 1),(Nox, Rx, 1), (P23x, DLx, 5),
+                 (P1x, Nox, 14), (Nox, Dx, 3),(Nox, URx, 11), (Nox, Ux, 1),(Nox, URx, 1),(Nox, Rx, 1), (P23x, DLx, 5),
+                 (P1x, Nox, 14), (Nox, Dx, 3),(Nox, URx, 11), (Nox, Ux, 1),(Nox, URx, 1),(Nox, Rx, 1), (P23x, DLx, 5),
+                 (P1x, Nox, 14), (Nox, Dx, 3),(Nox, URx, 11), (Nox, Ux, 1),(Nox, URx, 1),(Nox, Rx, 1), (P23x, DLx, 5),
+                 (P1x, Nox, 14), (Nox, Dx, 3),(Nox, URx, 11), (Nox, Ux, 1),(Nox, URx, 1),(Nox, Rx, 1), (P23x, DLx, 5),
+                 (P1x, Nox, 14), (Nox, Dx, 3),(Nox, URx, 11), (Nox, Ux, 1),(Nox, URx, 1),(Nox, Rx, 1), (P23x, DLx, 5),
+                 (P1x, Nox, 14), (Nox, Dx, 3),(Nox, URx, 11), (Nox, Ux, 1),(Nox, URx, 1),(Nox, Rx, 1), (P23x, DLx, 5),
+                 (P1x, Nox, 14), (Nox, Dx, 3),(Nox, URx, 11), (Nox, Ux, 1),(Nox, URx, 1),(Nox, Rx, 1), (P23x, DLx, 5),
+                 (P1x, Nox, 14), (Nox, Dx, 3),(Nox, URx, 11), (Nox, Ux, 1),(Nox, URx, 1),(Nox, Rx, 1), (P23x, DLx, 5),
+                 (P1x, Nox, 14), (Nox, Dx, 3),(Nox, URx, 11), (Nox, Ux, 1),(Nox, URx, 1),(Nox, Rx, 1), (P23x, DLx, 5),
+                 (P1x, Nox, 14), (Nox, Dx, 3),(Nox, URx, 11), (Nox, Ux, 1),(Nox, URx, 1),(Nox, Rx, 1), (P23x, DLx, 5),
+                 (P1x, Nox, 14), (Nox, Nox, 0))
+
+
+Blank = ((0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),
+         (0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0))
+
+Timing_Test = ((Nox, Dx, 1), (Nox, DLx, 1), (Nox, Lx, 1), (Nox, ULx, 1), (Nox, Ux, 1),
+               (Nox, URx, 1), (Nox, Rx, 1), (Nox, DRx, 1), (Nox, Dx, 1), (P1x, Nox, 1),
+               (Nox, Nox, 0))
+
+GB_Throw = ((Nox, ULx, 90), (Nox, Dx, 1), (Nox, DLx, 1), (Nox, Lx, 1), (P1x, Lx, 1),
+            (P1x & P2x & P3x, ULx, 1), Endx)
+
+Perfect_DL_MB = ((Nox, Dx, 3),(Nox, URx, 11), (Nox, Ux, 1),(Nox, URx, 1),(Nox, Rx, 1), (P23x, DLx, 5),
+                 (P1x, Nox, 14), (Nox, Nox, 0))
+
+Skrull_Infinte = ((P1x & P2x, Nox, 3), (P3x, Dx, 48), (P1x, Nox, 1), (Nox, Nox, 1), (P1x, URx, 3), (Nox, Nox, 1), (P1x, Nox, 73),
+                  (Nox, Nox, 1), (P3x, Dx, 48), (P1x, Nox, 1), (Nox, Nox, 1), (P1x, URx, 3), (Nox, Nox, 1), (P1x, Nox, 73),
+                  (Nox, Nox, 1), (P1x & P2x, Nox, 3), (P3x, Dx, 48), (P1x, Nox, 1), (Nox, Nox, 1), (P1x, URx, 3), (Nox, Nox, 1), (P1x, Nox, 73),
+                  (Nox, Nox, 1), (P3x, Dx, 48), (P1x, Nox, 1), (Nox, Nox, 1), (P1x, URx, 3), (Nox, Nox, 1), (P1x, Nox, 73),
+                  (Nox, Nox, 1), (P1x & P2x, Nox, 3), (P3x, Dx, 48), (P1x, Nox, 1), (Nox, Nox, 1), (P1x, URx, 3), (Nox, Nox, 1), (P1x, Nox, 73),
+                  (Nox, Nox, 1), (P3x, Dx, 48), (P1x, Nox, 1), (Nox, Nox, 1), (P1x, URx, 3), (Nox, Nox, 1), (P1x, Nox, 73),
+                  (Nox, Nox, 1), (P1x & P2x, Nox, 3), (P3x, Dx, 48), (P1x, Nox, 1), (Nox, Nox, 1), (P1x, URx, 3), (Nox, Nox, 1), (P1x, Nox, 73),
+                  (Nox, Nox, 1), (P3x, Dx, 48), (P1x, Nox, 1), (Nox, Nox, 1), (P1x, URx, 3), (Nox, Nox, 1), (P1x, Nox, 73),
+                  (Nox, Nox, 0))
+
+Dash = ((K4x, Nox, 2), (Nox, Nox, 0))
+
+Viper_Infinite = ((Nox, K1x, Viper_S_Wait), (Nox, Dx, 1), (Nox, DRx, 1), (Nox, Rx, 1), (P3x, Nox, Viper_TK_Wait),(Nox, K1x, Viper_Feint_Wait), (Nox, Nox, 1),
+                  (Nox, K1x, Viper_S_Wait), (Nox, Dx, 1), (Nox, DRx, 1), (Nox, Rx, 1), (P3x, Nox, Viper_TK_Wait),(Nox, K1x, Viper_Feint_Wait), (Nox, Nox, 1),
+                  (Nox, K1x, Viper_S_Wait), (Nox, Dx, 1), (Nox, DRx, 1), (Nox, Rx, 1), (P3x, Nox, Viper_TK_Wait),(Nox, K1x, Viper_Feint_Wait), (Nox, Nox, 1),
+                  (Nox, K1x, Viper_S_Wait), (Nox, Dx, 1), (Nox, DRx, 1), (Nox, Rx, 1), (P3x, Nox, Viper_TK_Wait),(Nox, K1x, Viper_Feint_Wait), (Nox, Nox, 1),
+                  (Nox, K1x, Viper_S_Wait), (Nox, Dx, 1), (Nox, DRx, 1), (Nox, Rx, 1), (P3x, Nox, Viper_TK_Wait),(Nox, K1x, Viper_Feint_Wait), (Nox, Nox, 1), (Nox, Nox, 0)) 
+
+comboSet = (Viper_Infinite, Blank, spoke_test_short, spoke_test, Timing_Test, GB_Throw, Perfect_DL_MB, Skrull_Infinte, Dash)
+
+#Port_E_Shortcuts
+Lx = 0xEF
+DLx = 0xEE
+Dx = 0xFE
+DRx = 0xDE
+Rx = 0xDF
+URx = 0xDD
+Ux = 0xFD
+ULx = 0xED
+K1x = 0xFB
+#Port_F_Shortcuts
+P1x = 0x7F
+P2x = 0xBF
+P3x = 0xDF
+P23x = 0x9F
+P4x = 0xEF
+K2x = 0xFB
+K3x = 0xFD
+K4x = 0xFE
+#Other_Shortcuts
+Nox = 0xFF
+Endx = (Nox, Nox, 0)
+
+def RunComboStep(Combo):
+    global State, Frame_Delay
+    poke(Port_F, Combo[Address_Pointer][0])
+    poke(Port_E, Combo[Address_Pointer][1])
+    Frame_Delay = Combo[Address_Pointer][2]
+    if Frame_Delay == 0:
+        State = Idle
+
+def RunCombo():
+    global State, Address_Pointer
+    State = Combo
+    Address_Pointer = 0
+
+@setHook(HOOK_1MS)
+def FrameCounter():
+    global Address_Pointer, Frame_Delay, ms_Counter
+    if State == Idle:
+        pass
+    elif State == Combo:
+        if Frame_Delay == 0:
+            RunComboStep(Perfect_DL_MB)
+            Address_Pointer = Address_Pointer + 1
+        else:
+            ms_Counter = ms_Counter + 1
+            if ms_Counter >= Frame_By_Ms:
+                ms_Counter = 0
+                Frame_Delay = Frame_Delay - 1
+
+def speek(index):
+    if  0 <= index <= spaceSize:
+        array = comboSpace_1
+        return ord(array[index])
+    if  spaceSize <= index <= (2 * spaceSize) - 1:
+        array = comboSpace_2
+        index = index - spaceSize
+        return ord(array[index])
+    if  2 * spaceSize <= index <= (3 * spaceSize) - 1:
+        array = comboSpace_3
+        index = index - spaceSize * 2
+        return ord(array[index])
+    if  3 * spaceSize <= index <= (4 * spaceSize) - 1:
+        array = comboSpace_4
+        index = index - spaceSize * 3
+        return ord(array[index])
+    if  4 * spaceSize <= index <= (5 * spaceSize) - 1:
+        array = comboSpace_5
+        index = index - spaceSize * 4
+        return ord(array[index])
+    if  5 * spaceSize <= index <= (6 * spaceSize) - 1:
+        array = comboSpace_6
+        index = index - spaceSize * 5
+        return ord(array[index])
+
+def spoke(index, val):
+    global comboSpace_1, comboSpace_2, comboSpace_3, comboSpace_4, comboSpace_5,comboSpace_6
+    if 0 <= index <= spaceSize - 1:
+        array = comboSpace_1
+        comboSpace_1 = array[:index] + chr(val) + array[index + 1:]
+    if spaceSize <= index <= (2 * spaceSize) - 1:
+        array = comboSpace_2
+        index = index - spaceSize
+        comboSpace_2 = array[:index] + chr(val) + array[index + 1:]
+    if 2 * spaceSize <= index <= (3 * spaceSize) - 1:
+        array = comboSpace_3
+        index = index - spaceSize * 2
+        comboSpace_3 = array[:index] + chr(val) + array[index + 1:]
+    if 3 * spaceSize <= index <= (4 * spaceSize) - 1:
+        array = comboSpace_4
+        index = index - spaceSize * 3
+        comboSpace_4 = array[:index] + chr(val) + array[index + 1:]
+    if 4 * spaceSize <= index <= (5 * spaceSize) - 1:
+        array = comboSpace_5
+        index = index - spaceSize * 4
+        comboSpace_5 = array[:index] + chr(val) + array[index + 1:]
+    if 5 * spaceSize <= index <= (6 * spaceSize) - 1:
+        array = comboSpace_6
+        index = index - spaceSize * 5
+        comboSpace_6 = array[:index] + chr(val) + array[index + 1:]
+
+def build_combo():
+    index = 0
+    s_index = index * 3
+    combo = comboSet[currentCombo]
+    while index < len(combo):
+        spoke(s_index, combo[index][0])
+        spoke(s_index+1, combo[index][1])
+        spoke(s_index+2, combo[index][2])
+        index = index + 1
+        s_index = index * 3
+
+def PressButton(pin):
+    writePin(pin, False)
+
+def ReleaseButton(pin):
+    writePin(pin, True)
+
+def run_combo_from_tuple(combo):
+    global State, frame_delay, Address_Pointer
+    Address_Pointer = 0
+    combo_executing = True
+    call(Disable_Interrupt)
+    while combo_executing:
+        poke(Port_F, combo[Address_Pointer][0])
+        poke(Port_E, combo[Address_Pointer][1])
+        frame_delay = combo[Address_Pointer][2]
+        if frame_delay == 0:
+            combo_executing = False
+        else:
+            _wait_for_frame_delay(frame_delay)
+            Address_Pointer = Address_Pointer + 1
+    call(Enable_Interrupt)
