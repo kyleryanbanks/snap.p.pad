@@ -29,6 +29,8 @@ IMPORTANT:  For the time being, this tool will ignore 4P and 4K button inputs.  
 add them in later, but since it's not Marvel specific, it's not a priority for me atm.
 """
 
+import sys, getopt
+
 DIRECTIONS ={"4" : "\xEF",
              "1" : "\xEE",
              "2" : "\xFE",
@@ -103,17 +105,41 @@ hex_combo_list = []
 imported_combo_list = []
 comment_list = []
 
-def import_combo_lib(combo_file='combo.txt'):
+combo_file = ''
+output_file = ''
+
+def main(argv):
+    global combo_file, output_file
+    try:
+       opts, args = getopt.getopt(argv,"hc:o:",["cfile=","ofile="])
+    except getopt.GetoptError:
+       print 'Python Combo_Converter.py -c <combo_file> -o <output_file>'
+       sys.exit(2)
+    for opt, arg in opts:
+       if opt == "-h":
+          print 'Python Combo_Converter.py -c <combo_file> -o <output_file>'
+          sys.exit()
+       elif opt in ("-c", "--cfile"):
+          combo_file = arg
+       elif opt in ("-o", "--ofile"):
+          output_file = arg
+    
+    import_combo_lib(combo_file)
+    build_hex_combo()
+    export_combo_lib(output_file)
+
+def import_combo_lib(combo_file):
+    if combo_file == '':
+        combo_file = 'combo.txt'
     with open(combo_file, 'r') as f:
         combo = []
         frame = []
         command = ''
         for line in f:
-            print 'line =', repr(line)
             line = line.rstrip('\n')
             #print 'Line after strip:', repr(line)
             for char in line:
-                print char
+                #print char
                 if char == '#':
                     #print 'comment line, append combo if one is being held'
                     comment_list.append(line)
@@ -143,8 +169,10 @@ def import_combo_lib(combo_file='combo.txt'):
         if combo:
             imported_combo_list.append(combo)
 
-def export_combo_lib(filename='combo_output.txt'):
-    with open(filename, 'w') as f:
+def export_combo_lib(output_file):
+    if output_file == '':
+      output_file = 'combo_output.txt'
+    with open(output_file, 'a+') as f:
         output = zip(comment_list, hex_combo_list)
         for pairs in output:
             for line in pairs:
@@ -179,6 +207,4 @@ def build_hex_combo():
         #print repr(hex_combo_list)
 
 if __name__ == "__main__":
-    import_combo_lib()
-    build_hex_combo()
-    export_combo_lib()
+    main(sys.argv[1:])
