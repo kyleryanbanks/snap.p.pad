@@ -167,9 +167,6 @@ def import_combo_lib(combo_file):
                 else:
                     #print 'adding char to command'
                     command = command + char
-               # print 'Command =', command
-                #print 'Frame =', frame
-                #print 'Combo =', combo
         if combo:
             imported_combo_list.append(combo)
 
@@ -181,7 +178,6 @@ def export_combo_lib(output_file):
         for pairs in output:
             for line in pairs:
               next_line = line
-              #print repr(next_line)
               f.write(repr(next_line))
               f.write("\n")
 

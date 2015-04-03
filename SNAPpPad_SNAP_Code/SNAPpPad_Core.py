@@ -41,10 +41,14 @@ LEFT = GPIO_5
 UP = GPIO_3
 DOWN = GPIO_4
 
+INPUT = 0
+OUTPUT = 1
+
 # Global Inits
 current_reset_position = 1
 running_mixups = False
 mixup_timer = -1
+board_mode = OUTPUT
 
 #Raw Opcodes
 DISABLE_INTERRUPT = "\xF8\x94\x08\x95"
@@ -61,7 +65,9 @@ OCF1A = 0x36 # Bit 2 is the OCRA1 Flag
 
 # ATmeg128RFA1 Address Mapping
 PORT_F = 0x31
+PORT_F_INPUT = 0x2F
 PORT_E = 0x2E
+PORT_E_INPUT = 0x2C
 PORT_B = 0x25
 
 #           7   6   5   4   3   2   1  0
@@ -77,27 +83,92 @@ RESET_CORNER = "\x3F\xDF\x05\xFF\xFF\x26\xFF\xFF\x00"
 RESET_POSITION_LIST = (RESET_MID, RESET_CORNER)
 
 # Mixup Combos (Port F|Port E|Frame)
-MIXUP_0 = "\x7F\xFF\x01\xFF\xFD\x01\x7F\xFF\x01\xFF\xFD\x01\x7F\xFF\x01\xFF\xFD\x01\x7F\xFF\x01\xFF\xFD\x01\x7F\xFF\x01\xFF\xFD\x01\xFF\xFF\x00"
-MIXUP_1 = "\x7F\xFF\x02\xFF\xFD\x02\x7F\xFF\x02\xFF\xFD\x02\x7F\xFF\x02\xFF\xFD\x02\x7F\xFF\x02\xFF\xFD\x02\x7F\xFF\x02\xFF\xFD\x02\xFF\xFF\x00"
-MIXUP_2 = "\x7F\xFF\x03\xFF\xFD\x03\x7F\xFF\x03\xFF\xFD\x03\x7F\xFF\x03\xFF\xFD\x03\x7F\xFF\x03\xFF\xFD\x03\x7F\xFF\x03\xFF\xFD\x03\xFF\xFF\x00"
-MIXUP_3 = "\x7F\xFF\x04\xFF\xFD\x04\x7F\xFF\x04\xFF\xFD\x04\x7F\xFF\x04\xFF\xFD\x04\x7F\xFF\x04\xFF\xFD\x04\x7F\xFF\x04\xFF\xFD\x04\xFF\xFF\x00"
-MIXUP_4 = "\x7F\xFF\x14\xFF\xFD\x14\x7F\xFF\x14\xFF\xFD\x14\x7F\xFF\x14\xFF\xFD\x14\x7F\xFF\x14\xFF\xFD\x14\xFF\xFF\x00"
-MIXUP_5 = "\x7F\xFF\x64\xFF\xFD\x64\x7F\xFF\x64\xFF\xFD\x64\x7F\xFF\x64\xFF\xFD\x64\x7F\xFF\x64\xFF\xFD\x64\xFF\xFF\x00"
-MIXUP_6 = "\x9F\xFF\x06\x7F\xFE\x09\xFF\xFF\x12\xDF\xDF\x01\xFF\xFF\x40\xFF\xFF\x00"
-MIXUP_7 = "\x9F\xFF\x06\x7F\xFE\x09\xFF\xFF\x12\xFF\xDD\x0E\x9F\xDE\x03\x7F\xFF\x01\xFF\xFF\x40\xFF\xFF\x00"
+MIXUP_0 = ""
+MIXUP_1 = ""
+MIXUP_2 = ""
+MIXUP_3 = ""
+MIXUP_4 = ""
+MIXUP_5 = ""
+MIXUP_6 = ""
+MIXUP_7 = ""
 
 BUTTON_LIST = (PUNCH1, PUNCH2, PUNCH3, PUNCH4, KICK1, KICK2, KICK3,
     KICK4, START, SELECT, HOME, RIGHT, LEFT, UP, DOWN)
 
 @setHook(HOOK_STARTUP)
-def _init():
+def playback_mode():
+    global board_mode
+    board_mode = OUTPUT
     #Setting all sensor lines to High Outputs
     x=0
     while x < len(BUTTON_LIST):
         setPinDir(BUTTON_LIST[x], True)
         writePin(BUTTON_LIST[x], True)
         x = x + 1
+
     _init_frame_timer()
+
+def passthrough_mode():
+    global board_mode
+    board_mode = INPUT
+    x=0
+    while x < len(BUTTON_LIST):
+        setPinDir(BUTTON_LIST[x], False)
+        x = x + 1
+        
+def record_combo():
+    global MIXUP_0
+    
+    if board_mode == INPUT:
+        MIXUP_0 = ""
+        waiting_for_user_input = True
+        recording_combo = True
+        Port_F = 0xFF
+        Port_E = 0xFF
+        input_count = 0
+        frame_delay = 0
+        
+        while waiting_for_user_input:
+            Peek_F = peek(PORT_F_INPUT)
+            Peek_E = peek(PORT_E_INPUT)
+            if Peek_F != Port_F or Peek_E != Port_E:
+                MIXUP_0 = MIXUP_0 + chr(Peek_F) + chr(Peek_E)
+                Port_F = Peek_F
+                Port_E = Peek_E
+                _reset_timer()
+                waiting_for_user_input = False
+                input_count = input_count + 1
+                
+        while recording_combo:
+            if peek(OCF1A) & 2:
+                poke(OCF1A, 14)
+                frame_delay = frame_delay + 1
+                Peek_F = peek(PORT_F_INPUT)
+                Peek_E = peek(PORT_E_INPUT)
+                if Peek_F != Port_F or Peek_E != Port_E:
+                    MIXUP_0 = MIXUP_0 + chr(frame_delay) + chr(Peek_F) + chr(Peek_E)
+                    Port_F = Peek_F
+                    Port_E = Peek_E
+                    input_count = input_count + 1
+                    frame_delay = 0
+                    if input_count >= 41:
+                        MIXUP_0 = MIXUP_0 + "\x01\xFF\xFF\x00"
+                        recording_combo = False
+                elif frame_delay >= 255:
+                    MIXUP_0 = MIXUP_0 + "\x01\xFF\xFF\x00"
+                    recording_combo = False
+                    
+        playback_mode()
+    
+def send_combo_to_portal(combo_num):
+    combo = _chooseComboFromList(combo_num)
+    if len(combo) > 60:
+        combo1 = combo[:60]
+        combo2 = combo[60:]
+        rpc('\x00\x00\x0F', 'combo', combo1)
+        rpc('\x00\x00\x0F', 'combo', combo2)
+    else:
+        rpc('\x00\x00\x0F', 'combo', combo)
 
 @setHook(HOOK_100MS)
 def _mixup_delay():
@@ -107,7 +178,6 @@ def _mixup_delay():
     elif mixup_timer == 0:
         mixup_timer = mixup_timer - 1
         reset_training_mode()
-        
 
 def _update_frame_delay(combo_position, frame_to_update, new_frame_delay):
     global MIXUP_0, MIXUP_1, MIXUP_2, MIXUP_3, MIXUP_4, MIXUP_5, MIXUP_6, MIXUP_7
@@ -269,6 +339,8 @@ def run_combo_with_HW_timer(combo_num):
     s_index = index * 3
     running_combo = True
     combo = _chooseComboFromList(combo_num)
+    if combo == '':
+        running_combo = False
     call(DISABLE_INTERRUPT)
     while running_combo:
         poke(PORT_F, _speek(combo, s_index))
