@@ -206,3 +206,27 @@ def run_combo_from_tuple(combo):
             _wait_for_frame_delay(frame_delay)
             Address_Pointer = Address_Pointer + 1
     call(Enable_Interrupt)
+
+def run_combo_with_pulse_timer(combo_num):
+    global mixup_timer
+    index = 0
+    s_index = index * 3
+    running_combo = True
+    combo = _chooseComboFromList(combo_num)
+    call(DISABLE_INTERRUPT)
+    while running_combo:
+        poke(PORT_F, _speek(combo, s_index))
+        poke(PORT_E, _speek(combo, s_index+1))
+        frame_delay = _speek(combo, s_index+2)
+        if frame_delay == 0:
+            running_combo = False
+        else:
+            while frame_delay:
+                pulsePin(PULSE, -32767, True)
+                pulsePin(PULSE, -pulse_window, True)
+                frame_delay = frame_delay - 1
+            index = index + 1
+            s_index = index * 3
+    call(ENABLE_INTERRUPT)
+    if running_mixups:
+        mixup_timer = 1
