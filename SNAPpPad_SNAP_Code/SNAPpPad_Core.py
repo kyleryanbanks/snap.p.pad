@@ -40,7 +40,6 @@ RIGHT = GPIO_6
 LEFT = GPIO_5
 UP = GPIO_3
 DOWN = GPIO_4
-PULSE = GPIO_10
 
 # Global Inits
 current_reset_position = 1
@@ -78,12 +77,12 @@ RESET_CORNER = "\x3F\xDF\x05\xFF\xFF\x26\xFF\xFF\x00"
 RESET_POSITION_LIST = (RESET_MID, RESET_CORNER)
 
 # Mixup Combos (Port F|Port E|Frame)
-MIXUP_0 = "\xFF\xDD\x0C\x9F\xDE\x03\xFF\xFF\x06\x7F\xFE\x01\xFF\xFF\x07\x7F\xFE\x01\xFF\xFF\x40\xFF\xFF\x00"
-MIXUP_1 = "\xFF\xDD\x0C\x9F\xDE\x03\x7F\xFF\x08\xFF\xFE\x03\xFF\xFD\x0C\x9F\xFE\x03\x7F\xFF\x01\xFF\xFF\x0C\x7F\xFE\x01\xFF\xFF\x40\xFF\xFF\x00"
-MIXUP_2 = "\xFF\xDD\x0C\x9F\xDE\x03\x7F\xFF\x08\xFF\xFF\x03\x7F\xFE\x01\xFF\xFF\x07\x7F\xFE\x01\xFF\xFF\x40\xFF\xFF\x00"
-MIXUP_3 = "\xFF\xDD\x0E\x9F\xDE\x03\x7F\xFF\x01\xFF\xFF\x04\x7F\xFE\x01\xFF\xFF\x14\xDF\xDF\x01\xFF\xFF\x40\xFF\xFF\x00"
-MIXUP_4 = "\xFF\xDD\x0E\x9F\xDE\x14\xFF\xFF\x01\xDF\xDF\x01\xFF\xFF\x40\xFF\xFF\x00"
-MIXUP_5 = "\x9F\xFF\x09\x7F\xFE\x08\xFF\xFF\x01\x7F\xFE\x08\xFF\xFF\x14\xDF\xDF\x01\xFF\xFF\x40\xFF\xFF\x00"
+MIXUP_0 = "\x7F\xFF\x01\xFF\xFD\x01\x7F\xFF\x01\xFF\xFD\x01\x7F\xFF\x01\xFF\xFD\x01\x7F\xFF\x01\xFF\xFD\x01\x7F\xFF\x01\xFF\xFD\x01\xFF\xFF\x00"
+MIXUP_1 = "\x7F\xFF\x02\xFF\xFD\x02\x7F\xFF\x02\xFF\xFD\x02\x7F\xFF\x02\xFF\xFD\x02\x7F\xFF\x02\xFF\xFD\x02\x7F\xFF\x02\xFF\xFD\x02\xFF\xFF\x00"
+MIXUP_2 = "\x7F\xFF\x03\xFF\xFD\x03\x7F\xFF\x03\xFF\xFD\x03\x7F\xFF\x03\xFF\xFD\x03\x7F\xFF\x03\xFF\xFD\x03\x7F\xFF\x03\xFF\xFD\x03\xFF\xFF\x00"
+MIXUP_3 = "\x7F\xFF\x04\xFF\xFD\x04\x7F\xFF\x04\xFF\xFD\x04\x7F\xFF\x04\xFF\xFD\x04\x7F\xFF\x04\xFF\xFD\x04\x7F\xFF\x04\xFF\xFD\x04\xFF\xFF\x00"
+MIXUP_4 = "\x7F\xFF\x14\xFF\xFD\x14\x7F\xFF\x14\xFF\xFD\x14\x7F\xFF\x14\xFF\xFD\x14\x7F\xFF\x14\xFF\xFD\x14\xFF\xFF\x00"
+MIXUP_5 = "\x7F\xFF\x64\xFF\xFD\x64\x7F\xFF\x64\xFF\xFD\x64\x7F\xFF\x64\xFF\xFD\x64\x7F\xFF\x64\xFF\xFD\x64\xFF\xFF\x00"
 MIXUP_6 = "\x9F\xFF\x06\x7F\xFE\x09\xFF\xFF\x12\xDF\xDF\x01\xFF\xFF\x40\xFF\xFF\x00"
 MIXUP_7 = "\x9F\xFF\x06\x7F\xFE\x09\xFF\xFF\x12\xFF\xDD\x0E\x9F\xDE\x03\x7F\xFF\x01\xFF\xFF\x40\xFF\xFF\x00"
 
@@ -109,6 +108,7 @@ def _mixup_delay():
         mixup_timer = mixup_timer - 1
         reset_training_mode()
         
+
 def _update_frame_delay(combo_position, frame_to_update, new_frame_delay):
     global MIXUP_0, MIXUP_1, MIXUP_2, MIXUP_3, MIXUP_4, MIXUP_5, MIXUP_6, MIXUP_7
     if combo_position == 0:
@@ -176,22 +176,14 @@ def _init_frame_timer():
     """Initialize the hardware timer, and reset count"""
     poke(TCCR1A, 192)  # Set OCF1A flag on match
     poke(TCCR1B, 10)  # Run counter-mode with prescaler at divide-by 8 and CTC set
-    poke(OCR1AH, 0x82)
-    poke(OCR1AL, 0x3C) # Set OCR1A compare value = 0x823C / 33340 cycles / 16.67mS / 1 Frame
+    poke(OCR1AH, 0x78)
+    poke(OCR1AL, 0x08) # Set OCR1A compare value = 0x7908 / 30728 cycles / 1 Frame - Overhead
 
 def _reset_timer():
     # Note: Must write HI byte before LO byte
     poke(TCNT1H, 0)
     poke(TCNT1L, 0)
     poke(OCF1A, 14)  # Set OCF1A flag to 0
-
-def _poll_timer_flag():
-    # Note: Must read LO byte before HI byte
-    if peek(OCF1A) & 2:
-        poke(OCF1A, 14)
-        return True
-    else:
-        return False
 
 def _speek(combo, index):
     return ord(combo[index])
@@ -226,13 +218,13 @@ def _chooseComboFromList(combo):
     elif combo == 3:
             combo_string = MIXUP_3
     elif combo == 4:
-            combo_string = MIXUP_0
+            combo_string = MIXUP_4
     elif combo == 5:
-            combo_string = MIXUP_1
+            combo_string = MIXUP_5
     elif combo == 6:
-            combo_string = MIXUP_2
+            combo_string = MIXUP_6
     elif combo == 7:
-            combo_string = MIXUP_3
+            combo_string = MIXUP_7
     return combo_string
 
 def start_mixups():
@@ -258,10 +250,12 @@ def reset_training_mode():
         if frame_delay == 0:
             resetting = False
         else:
+            _reset_timer()
+            #We don't care about being frame perfect on resets
             while frame_delay:
-                pulsePin(PULSE, -32767, True)
-                pulsePin(PULSE, -pulse_window, True)
-                frame_delay = frame_delay - 1
+                if peek(OCF1A) & 2:
+                    poke(OCF1A, 14)
+                    frame_delay = frame_delay - 1
             index = index + 1
             s_index = index * 3
     call(ENABLE_INTERRUPT)
@@ -283,11 +277,22 @@ def run_combo_with_HW_timer(combo_num):
         if frame_delay == 0:
             running_combo = False
         else:
+            first_frame = True
             _reset_timer()
+            #First frame shortened to account for overhead
+            while first_frame:
+                if peek(OCF1A) & 2:
+                    poke(OCR1AH, 0x82) 
+                    poke(OCR1AL, 0x96) # Set OCR1A compare value = 0x8296 / 33430 cycles / (16.67 @ 4 frames) / 1 Frame
+                    poke(OCF1A, 14)
+                    frame_delay = frame_delay - 1
+                    first_frame = False
             while frame_delay:
                 if peek(OCF1A) & 2:
                     poke(OCF1A, 14)
                     frame_delay = frame_delay - 1
+            poke(OCR1AH, 0x78)
+            poke(OCR1AL, 0x08) # Set OCR1A compare value = 0x7908 / 30728 cycles / 1 Frame - Overhead
             index = index + 1
             s_index = index * 3
     call(ENABLE_INTERRUPT)
