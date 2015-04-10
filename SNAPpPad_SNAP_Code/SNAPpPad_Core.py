@@ -25,29 +25,33 @@ combo = ((1byte_Port_F Buttons, 1_byte_PORT_E Buttons, 1_byte_frame_delay),
 from synapse.platforms import *
 
 # Button Definitions
-PUNCH1 = GPIO_18
-PUNCH2 = GPIO_17
-PUNCH3 = GPIO_16
-PUNCH4 = GPIO_15
-KICK1 = GPIO_13
-KICK2 = GPIO_12
-KICK3 = GPIO_11
 KICK4 = GPIO_14
-START = GPIO_0
+KICK3 = GPIO_11
+KICK2 = GPIO_12
+KICK1 = GPIO_13
+
+PUNCH4 = GPIO_15
+PUNCH3 = GPIO_16
+PUNCH2 = GPIO_17
+PUNCH1 = GPIO_18
+
+START = GPIO_2
 SELECT = GPIO_1
-HOME = GPIO_2
+HOME = GPIO_0
+
 RIGHT = GPIO_6
 LEFT = GPIO_5
-UP = GPIO_3
-DOWN = GPIO_4
+UP = GPIO_4
+DOWN = GPIO_3
 
-INPUT = 0
-OUTPUT = 1
 
 # Global Inits
 current_reset_position = 1
 running_mixups = False
 mixup_timer = -1
+
+INPUT = 0
+OUTPUT = 1
 board_mode = OUTPUT
 
 #Raw Opcodes
@@ -74,11 +78,11 @@ PORT_B = 0x25
 # Port F = 1P, 2P, 3P, 4P, __, 1K, 2K, 3K
 # Port F =  L,  M,  H, 4P, __,  S, A1, A2 (Marvel Mappings)
 # Port E = __, __, Ri, Le, __, 4K, Do, Up
-# Port B = St, Se, Ho, __, __, __, __, __
+# Port B = Ho, Se, St, __, __, __, __, __
 
 # Reset Codes (Port B|Port E|Delay)
-RESET_MID = "\x3F\xFF\x05\xFF\xFF\x26\xFF\xFF\x00"
-RESET_CORNER = "\x3F\xDF\x05\xFF\xFF\x26\xFF\xFF\x00"
+RESET_MID = "\x9F\xFF\x05\xFF\xFF\x26\xFF\xFF\x00"
+RESET_CORNER = "\x9F\xDF\x05\xFF\xFF\x26\xFF\xFF\x00"
 
 RESET_POSITION_LIST = (RESET_MID, RESET_CORNER)
 
