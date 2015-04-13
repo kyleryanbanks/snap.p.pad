@@ -24,9 +24,6 @@ I will also be implementing shortcuts for common commands (QCF, DP, etc.) The fo
 will be: Shorcut, button to be pressed with last direction, frames to wait after button
 In these situations, the system will assume you want 1 frame of wait for all inputs
 and place the button press on the same frame as the last direction in the input.
-
-IMPORTANT:  For the time being, this tool will ignore 4P and 4K button inputs.  I will
-add them in later, but since it's not Marvel specific, it's not a priority for me atm.
 """
 
 import sys, getopt
@@ -103,6 +100,12 @@ SHORTCUTS = {"QCF": "\xFE\xFF\x01\xDE\xFF\x01\xDF",
              "dpb": "\xEF\xFF\x01\xFE\xFF\x01\xEE",
              "mbf": "\xFD\xFF\x01\xDD\xFF\x01\xDF",
              "mbb": "\xFD\xFF\x01\xED\xFF\x01\xEF",
+             "sj": "\xFD\xFF\x03\xFE",
+             "SJ": "\xFD\xFF\x03\xFE",
+             "sjuf": "\xFD\xFF\x03\xDE",
+             "SJUF": "\xFD\xFF\x03\xDE",
+             "sjub": "\xFD\xFF\x03\xEE",
+             "SJUB": "\xFD\xFF\x03\xEE"
              }
 
 hex_combo_list = []
@@ -201,7 +204,12 @@ def build_hex_combo():
             else:
                 hex_combo = hex_combo + BUTTONS[(frame[1])]
             #Add Frame Value
-            hex_combo = hex_combo + chr(frame[2])
+            #If frame count is 0, add range counter tag to front of combo.
+            if frame[2] == 0:
+              input_count = (len(hex_combo)+1)/3
+              hex_combo = '\xFF\xFF' + chr(input_count) + hex_combo + chr(1)
+            else:
+              hex_combo = hex_combo + chr(frame[2])
         hex_combo = hex_combo + '\xFF\xFF\x00'
         hex_combo_list.append(hex_combo)
         #print repr(hex_combo_list)

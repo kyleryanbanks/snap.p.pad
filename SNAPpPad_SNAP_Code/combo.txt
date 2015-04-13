@@ -1,6 +1,16 @@
-#EMD L
-/d.x.1//df.x.1//f.l.1/
-#DP L
-/f.x.1//d.x.1//df.l.1/
-#Tauseef Wolv Incoming
-/qcf.b.30//uf.x.15//x.h.8//x.lma.8//uf.x.15//df.h.20//uf.x.4//x.l.20/
+#SJ ADDF MB for range testing
+/sj.x.11//mbf.x.1//df.mh.0//x.l.1/
+#SJ ADD MB for range testing
+/sj.x.11//mbf.x.1//d.mh.0//x.l.1/
+#SJ ADDB MB for range testing
+/sj.x.11//mbf.x.1//db.mh.0//x.l.1/
+#SJ ADB MB for range testing
+/sj.x.11//mbf.x.1//db.mh.0//x.l.1/
+#SJ ADUB MB for range testing
+/sj.x.11//mbf.x.1//ub.mh.0//x.l.1/
+#SJ ADU MB for range testing
+/sj.x.11//mbf.x.1//u.mh.0//x.l.1/
+#SJ ADUF MB for range testing
+/sj.x.11//mbf.x.1//uf.mh.0//x.l.1/
+#SJ ADF MB for range testing
+/sj.x.11//mbf.x.1//f.mh.0//x.l.1/
