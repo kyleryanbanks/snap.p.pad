@@ -1,16 +1,10 @@
-#SJ ADDF MB for range testing
-/sj.x.11//mbf.x.1//df.mh.0//x.l.1/
-#SJ ADD MB for range testing
-/sj.x.11//mbf.x.1//d.mh.0//x.l.1/
-#SJ ADDB MB for range testing
-/sj.x.11//mbf.x.1//db.mh.0//x.l.1/
-#SJ ADB MB for range testing
-/sj.x.11//mbf.x.1//db.mh.0//x.l.1/
-#SJ ADUB MB for range testing
-/sj.x.11//mbf.x.1//ub.mh.0//x.l.1/
-#SJ ADU MB for range testing
-/sj.x.11//mbf.x.1//u.mh.0//x.l.1/
-#SJ ADUF MB for range testing
-/sj.x.11//mbf.x.1//uf.mh.0//x.l.1/
-#SJ ADF MB for range testing
-/sj.x.11//mbf.x.1//f.mh.0//x.l.1/
+#Flight Cancel Plink MB Test 1 dash used
+/sj.x.20//qcb.s.9//b.mh.9//db.s.1//db.mh.1//x.l.5/
+#Test 2 no dash used.
+/sj.x.20//qcb.s.12//x.x.0/mbf.s.1//db.mh.5//x.l.25/
+#Test 2 no dash used.
+/sj.x.20//qcb.s.12//b.mh.9/mbf.s.1//db.mh.5//x.l.25/
+#Test 2 no dash used.
+/sj.x.20//qcb.s.12//ub.mh.9//mbf.x.1//db.mh.0//x.s.1/x.l.25/
+#Perfect flight MB test
+/sj.x.20//qcb.s.1//b.mh.90/x.x.0//mbf.x.1//db.mh.5//x.l.1/
