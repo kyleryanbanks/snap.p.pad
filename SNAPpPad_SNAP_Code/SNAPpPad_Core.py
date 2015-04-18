@@ -81,24 +81,27 @@ PORT_A = 0x22
 #           7   6   5   4   3   2   1  0
 # Port F = 1P, 2P, 3P, 4P, __, 1K, 2K, 3K
 # Port F =  L,  M,  H, 4P, __,  S, A1, A2 (Marvel Mappings)
-# Port E = __, __, Ri, Le, __, 4K, Do, Up
+# Port E = __, __, Ri, Le, __, 4K, Up, Do
 # Port B = Ho, Se, St, __, __, __, __, __
 
+# Reset Codes (Port E|Port B|Delay) Had to modify these temporarily due to a HW issue. -Kyle
+#RESET_MID = "\x9F\xFF\x05\xFF\xFF\x26\xFF\xFF\x00"
+#RESET_CORNER = "\x9F\xDF\x05\xFF\xFF\x26\xFF\xFF\x00"
 # Reset Codes (Port B|Port E|Delay)
-RESET_MID = "\x9F\xFF\x05\xFF\xFF\x26\xFF\xFF\x00"
-RESET_CORNER = "\x9F\xDF\x05\xFF\xFF\x26\xFF\xFF\x00"
+RESET_MID = "\xFF\x3F\x05\xFF\xFF\x26\xFF\xFF\x00"
+RESET_CORNER = "\xDF\x3F\x05\xFF\xFF\x26\xFF\xFF\x00"
 
 RESET_POSITION_LIST = (RESET_MID, RESET_CORNER)
 
-# Mixup Combos (Port F|Port E|Frame)
-MIXUP_0 = ""
-MIXUP_1 = ""
-MIXUP_2 = ""
-MIXUP_3 = ""
-MIXUP_4 = ""
-MIXUP_5 = ""
-MIXUP_6 = ""
-MIXUP_7 = ""
+# Mixup Combos (Port E|Port F|Frame)
+MIXUP_0 = '\xff\xff\x06\xfd\xff\x03\xfe\xff\x0b\xfd\xff\x01\xdd\xff\x01\xdf\xff\x01\xde\x9f\x01\xff\x7f\x01\xff\xff\x00'
+MIXUP_1 = '\xff\xff\x06\xfd\xff\x03\xfe\xff\x0b\xfd\xff\x01\xdd\xff\x01\xdf\xff\x01\xfe\x9f\x01\xff\x7f\x01\xff\xff\x00'
+MIXUP_2 = '\xff\xff\x06\xfd\xff\x03\xfe\xff\x0b\xfd\xff\x01\xdd\xff\x01\xdf\xff\x01\xee\x9f\x01\xff\x7f\x01\xff\xff\x00'
+MIXUP_3 = '\xff\xff\x06\xfd\xff\x03\xfe\xff\x0b\xfd\xff\x01\xdd\xff\x01\xdf\xff\x01\xee\x9f\x01\xff\x7f\x01\xff\xff\x00'
+MIXUP_4 = '\xff\xff\x06\xfd\xff\x03\xfe\xff\x0b\xfd\xff\x01\xdd\xff\x01\xdf\xff\x01\xed\x9f\x01\xff\x7f\x01\xff\xff\x00'
+MIXUP_5 = '\xff\xff\x06\xfd\xff\x03\xfe\xff\x0b\xfd\xff\x01\xdd\xff\x01\xdf\xff\x01\xfd\x9f\x01\xff\x7f\x01\xff\xff\x00'
+MIXUP_6 = '\xff\xff\x06\xfd\xff\x03\xfe\xff\x0b\xfd\xff\x01\xdd\xff\x01\xdf\xff\x01\xdd\x9f\x01\xff\x7f\x01\xff\xff\x00'
+MIXUP_7 = '\xff\xff\x06\xfd\xff\x03\xfe\xff\x0b\xfd\xff\x01\xdd\xff\x01\xdf\xff\x01\xdf\x9f\x01\xff\x7f\x01\xff\xff\x00'
 
 BUTTON_LIST = (PUNCH1, PUNCH2, PUNCH3, PUNCH4, KICK1, KICK2, KICK3,
     KICK4, START, SELECT, HOME, RIGHT, LEFT, UP, DOWN)
@@ -144,10 +147,10 @@ def record_combo():
             Peek_F = peek(PORT_F_INPUT)
             Peek_E = peek(PORT_E_INPUT)
             if Peek_F != Port_F or Peek_E != Port_E:
-                MIXUP_0 = MIXUP_0 + chr(Peek_F) + chr(Peek_E)
+                MIXUP_0 = MIXUP_0 + chr(Peek_E) + chr(Peek_F)
                 Port_F = Peek_F
                 Port_E = Peek_E
-                _reset_timer())
+                _reset_timer()
 
                 waiting_for_user_input = False
                 input_count = input_count + 1
@@ -156,10 +159,10 @@ def record_combo():
             if peek(OCF1A) & 2:
                 poke(OCF1A, 14)
                 frame_delay = frame_delay + 1
-                Peek_F = peek(PORT_F_INPUT)
                 Peek_E = peek(PORT_E_INPUT)
+                Peek_F = peek(PORT_F_INPUT)
                 if Peek_F != Port_F or Peek_E != Port_E:
-                    MIXUP_0 = MIXUP_0 + chr(frame_delay) + chr(Peek_F) + chr(Peek_E)
+                    MIXUP_0 = MIXUP_0 + chr(frame_delay) + chr(Peek_E) + chr(Peek_F)
                     Port_F = Peek_F
                     Port_E = Peek_E
                     input_count = input_count + 1
@@ -280,8 +283,8 @@ def _init_frame_timer():
     """Initialize the hardware timer, and reset count"""
     poke(TCCR1A, 192)  # Set OCF1A flag on match
     poke(TCCR1B, 10)  # Run counter-mode with prescaler at divide-by 8 and CTC set
-    poke(OCR1AH, 0x78)
-    poke(OCR1AL, 0x08) # Set OCR1A compare value = 0x7908 / 30728 cycles / 1 Frame - Overhead
+    poke(OCR1AH, 0x7E)
+    poke(OCR1AL, 0xFB) # Set OCR1A compare value = 0x7908 / 30728 cycles / 1 Frame - Overhead
 
 def _reset_timer():
     # Note: Must write HI byte before LO byte
@@ -312,7 +315,6 @@ def _chooseMixup():
     while mixup_choice < num_mixups and calculating_mixup:
         if random_segment * mixup_choice <= random_number < random_segment * (mixup_choice + 1):
             chosen_mixup = mixup_choice
-            print chosen_mixup
             calculating_mixup = False
         else:
             mixup_choice = mixup_choice + 1
@@ -325,8 +327,9 @@ def _chooseMixup():
 def start_range_testing(combo_num):
     global range_testing, range_test_combo
     range_test_combo = combo_num
-    range_testing = True
     reset_training_mode()
+    range_testing = True
+    run_combo(range_test_combo)
 
 def stop_range_testing():
     global range_testing
@@ -337,17 +340,24 @@ def _set_range_input_count(val):
     range_input_count = val
 
 def _update_range_test_frame():
+    print 'Inside update range'
+    print 'range_input_count: ', range_input_count
+    print 'range_test_combo: ', range_test_combo
     frame_location = (range_input_count * 3) + 2
+    print 'frame_location: ', frame_location
     range_test_string = _chooseComboFromList(range_test_combo)
-    new_frame_delay = _speek(range_test_string, frame_location) + 1
-    _spoke(range_test_combo, frame_location, new_frame_delay)
+    send_combo_to_portal(range_test_combo)
+    current_frame_delay = _speek(range_test_string, frame_location)
+    print 'current_frame_delay: ', current_frame_delay
+    _spoke(range_test_combo, frame_location, current_frame_delay+1)
+    send_combo_to_portal(range_test_combo)
 
 #---------------------------
 #  Basic Combo Functions   #
 #---------------------------
 
 @setHook(HOOK_100MS)
-def _reset_timer():
+def _loop_timer():
     global reset_timer
     if reset_timer > 0:
         reset_timer = reset_timer - 1
@@ -363,8 +373,8 @@ def reset_training_mode():
     combo = RESET_POSITION_LIST[current_reset_position]
     call(DISABLE_INTERRUPT)
     while resetting:
-        poke(PORT_B, _speek(combo, s_index))
-        poke(PORT_E, _speek(combo, s_index+1))
+        poke(PORT_E, _speek(combo, s_index))
+        poke(PORT_B, _speek(combo, s_index+1))
         frame_delay = _speek(combo, s_index+2)
         if frame_delay == 0:
             resetting = False
@@ -382,44 +392,50 @@ def reset_training_mode():
         run_combo(chosen_mixup)
     if range_testing:
         _update_range_test_frame()
+        print 'updated the range combo.'
         run_combo(range_test_combo)
 
 def run_combo(combo_num):
-    global mixup_timer
+    global reset_timer
     running_combo = True
     combo = _chooseComboFromList(combo_num)
+    
     #Don't try and run an empty combo
     if combo == '':
         running_combo = False
+    
     #Check for range test flag, set input_number and tell combo to ignore first input.
-    if combo[0:2] == '\xFF\xFF':
-        _set_range_input_count(_speek(combo, 3))
+    if combo[0:2] == '\xff\xff':
+        _set_range_input_count(_speek(combo, 2))
         index = 1
     else:
         index = 0
+
     s_index = index * 3
+    first_frame = True
     call(DISABLE_INTERRUPT)
+    _reset_timer()
     while running_combo:
         #Push inputs to the real ports and set frame delay.
-        poke(PORT_F, _speek(combo, s_index))
-        poke(PORT_E, _speek(combo, s_index+1))
+        poke(PORT_E, _speek(combo, s_index))
+        poke(PORT_F, _speek(combo, s_index+1))
         frame_delay = _speek(combo, s_index+2)
         if frame_delay == 0:
             running_combo = False
         else:
-            _reset_timer()
             while frame_delay:
                 if peek(OCF1A) & 2:
-                    #There were some wierd timing issues when trying to manually adjust the timing during wait frames.
-                    #To remedy this, we're poking to a dummy port so we're doing roughly the same actions regardless.
-                    poke(PORT_A, _speek(combo, s_index))
-                    poke(PORT_A, _speek(combo, s_index+1))
-                    dummy = _speek(combo, s_index+2)
+                    #DON'T MODIFY THIS PORTION. THIS IS SPECIFICALLY CODED TO CREATE CONSISTENT TIMING!!!!
+                    if first_frame:
+                        first_frame = False
+                        _reset_timer()
+                    else:
+                        poke(PORT_A, _speek(combo, s_index+2))
+                        _reset_timer()
                     frame_delay = frame_delay - 1
-                    _reset_timer()
             index = index + 1
             s_index = index * 3
     call(ENABLE_INTERRUPT)
+
     if running_mixups or range_testing:
         reset_timer = 1
-

@@ -29,29 +29,29 @@ and place the button press on the same frame as the last direction in the input.
 import sys, getopt
 
 DIRECTIONS ={"4" : "\xEF",
-             "1" : "\xED",
-             "2" : "\xFD",
-             "3" : "\xDD",
+             "1" : "\xEE",
+             "2" : "\xFE",
+             "3" : "\xDE",
              "6" : "\xDF",
-             "9" : "\xDE",
-             "8" : "\xFE",
-             "7" : "\xEE",
+             "9" : "\xDD",
+             "8" : "\xFD",
+             "7" : "\xED",
              "B" : "\xEF",
-             "DB" : "\xED",
-             "D" : "\xFD",
-             "DF" : "\xDD",
+             "DB" : "\xEE",
+             "D" : "\xFE",
+             "DF" : "\xDE",
              "F" : "\xDF",
-             "UF" : "\xDE",
-             "U" : "\xFE",
-             "UB" : "\xEE",
+             "UF" : "\xDD",
+             "U" : "\xFD",
+             "UB" : "\xED",
              "b" : "\xEF",
-             "db" : "\xED",
-             "d" : "\xFD",
-             "df" : "\xDD",
+             "db" : "\xEE",
+             "d" : "\xFE",
+             "df" : "\xDE",
              "f" : "\xDF",
-             "uf" : "\xDE",
-             "u" : "\xFE",
-             "ub" : "\xEE",
+             "uf" : "\xDD",
+             "u" : "\xFD",
+             "ub" : "\xED",
              "x" : "\xFF",
              "X" : "\xFF",
              }
@@ -100,12 +100,12 @@ SHORTCUTS = {"QCF": "\xFE\xFF\x01\xDE\xFF\x01\xDF",
              "dpb": "\xEF\xFF\x01\xFE\xFF\x01\xEE",
              "mbf": "\xFD\xFF\x01\xDD\xFF\x01\xDF",
              "mbb": "\xFD\xFF\x01\xED\xFF\x01\xEF",
-             "sj": "\xFD\xFF\x03\xFE",
-             "SJ": "\xFD\xFF\x03\xFE",
-             "sjuf": "\xFD\xFF\x03\xDE",
-             "SJUF": "\xFD\xFF\x03\xDE",
-             "sjub": "\xFD\xFF\x03\xEE",
-             "SJUB": "\xFD\xFF\x03\xEE"
+             "sj": "\xFE\xFF\x03\xFD",
+             "SJ": "\xFE\xFF\x03\xFD",
+             "sjuf": "\xFE\xFF\x03\xDD",
+             "SJUF": "\xFE\xFF\x03\xDD",
+             "sjub": "\xFE\xFF\x03\xED",
+             "SJUB": "\xFE\xFF\x03\xED"
              }
 
 hex_combo_list = []
@@ -181,8 +181,19 @@ def export_combo_lib(output_file):
         for pairs in output:
             for line in pairs:
               next_line = line
-              f.write(repr(next_line))
+              f.write(next_line)
               f.write("\n")
+
+        mixup_count = 0
+        f.write('\nCode for SNAPpPad Core\n')
+        for line in hex_combo_list:
+          header = 'MIXUP_%s = ' % mixup_count
+          next_line = header + "'%s'" %line
+          f.write(next_line)
+          mixup_count += 1
+          if mixup_count > 7:
+            mixup_count = 0
+          f.write("\n")
 
 def build_hex_combo():
     for combo in imported_combo_list:
@@ -211,7 +222,7 @@ def build_hex_combo():
             else:
               hex_combo = hex_combo + chr(frame[2])
         hex_combo = hex_combo + '\xFF\xFF\x00'
-        hex_combo_list.append(hex_combo)
+        hex_combo_list.append("".join([r"\x%02x" % ord(i) for i in hex_combo]))
         #print repr(hex_combo_list)
 
 if __name__ == "__main__":
