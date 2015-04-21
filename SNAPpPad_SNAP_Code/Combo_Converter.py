@@ -177,23 +177,23 @@ def export_combo_lib(output_file):
     if output_file == '':
       output_file = 'combo_output.txt'
     with open(output_file, 'a+') as f:
-        output = zip(comment_list, hex_combo_list)
-        for pairs in output:
-            for line in pairs:
-              next_line = line
-              f.write(next_line)
-              f.write("\n")
-
         mixup_count = 0
-        f.write('\nCode for SNAPpPad Core\n')
+        code_line = []
         for line in hex_combo_list:
           header = 'MIXUP_%s = ' % mixup_count
           next_line = header + "'%s'" %line
-          f.write(next_line)
+          code_line.append(next_line)
           mixup_count += 1
           if mixup_count > 7:
             mixup_count = 0
-          f.write("\n")
+
+        f.write('\nCode for SNAPpPad Core\n\n')
+        output = zip(comment_list, code_line)
+        for pairs in output:
+            for line in pairs:
+              f.write(line)
+              f.write("\n")
+
 
 def build_hex_combo():
     for combo in imported_combo_list:
