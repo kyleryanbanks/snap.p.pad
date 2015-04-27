@@ -1,0 +1,12 @@
+#Perfect tridash j.L x2
+/sj.x.7//df.mh.2//x.l.9//sj.x.7//df.mh.2//x.l.5/
+#Perfect tridash j.L fuzzy j.M
+/sj.x.7//df.mh.2//x.l.9//u.x.1//x.m.0//x.x.1//df.mh.2//x.l.5/
+#Perfect tridash j.L fuzzy j.M add.L
+/sj.x.7//df.mh.2//x.l.9//u.x.1//x.m.0//x.x.1/d.mh.2//x.l.5/
+#Perfect tridash j.L c.L
+/sj.x.7//df.mh.2//x.l.0//x.x.1//d.l.5/
+#Check pre-jump frames.
+/u.x.0//x.l.5/
+#Timing Verification
+/u.l.1//uf.m.1//f.h.1//df.s.1//d.a1.1//db.a2.1//b.l.1//ub.m.1//u.h.1/
