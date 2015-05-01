@@ -20,9 +20,10 @@ wx.ID_LIBRARY = 1000
 class mainFrame ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"SNAPpPad", pos = wx.DefaultPosition, size = wx.Size( 750,550 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"SNAPpPad", pos = wx.DefaultPosition, size = wx.Size( 828,550 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 		
-		self.SetSizeHintsSz( wx.Size( 750,550 ), wx.DefaultSize )
+		self.SetSizeHintsSz( wx.Size( 828,550 ), wx.DefaultSize )
+		self.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 90, False, "Open Sans" ) )
 		self.SetForegroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOWTEXT ) )
 		self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_3DLIGHT ) )
 		
@@ -88,15 +89,54 @@ class mainFrame ( wx.Frame ):
 		workspace_Sizer = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.library_Panel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer14 = wx.BoxSizer( wx.VERTICAL )
+		
 		library_sbSizer = wx.StaticBoxSizer( wx.StaticBox( self.library_Panel, wx.ID_ANY, u"Library" ), wx.VERTICAL )
 		
 		self.library = wx.TreeCtrl( self.library_Panel, wx.ID_LIBRARY, wx.DefaultPosition, wx.Size( 200,-1 ), wx.TR_EDIT_LABELS|wx.TR_FULL_ROW_HIGHLIGHT|wx.TR_HAS_BUTTONS|wx.TR_HIDE_ROOT|wx.TR_LINES_AT_ROOT|wx.TR_NO_LINES|wx.TR_TWIST_BUTTONS )
+		self.library.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 90, False, "Open Sans" ) )
+		
 		library_sbSizer.Add( self.library, 1, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL, 0 )
 		
 		
-		self.library_Panel.SetSizer( library_sbSizer )
+		bSizer14.Add( library_sbSizer, 1, wx.EXPAND, 5 )
+		
+		SNAPpPad_sbSizer = wx.StaticBoxSizer( wx.StaticBox( self.library_Panel, wx.ID_ANY, u"SNAPpPad Info" ), wx.VERTICAL )
+		
+		bSizer15 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText5 = wx.StaticText( self.library_Panel, wx.ID_ANY, u"MAC Address", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText5.Wrap( -1 )
+		bSizer15.Add( self.m_staticText5, 0, wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM|wx.RIGHT|wx.LEFT, 5 )
+		
+		self.textCtrl_MAC = wx.TextCtrl( self.library_Panel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.textCtrl_MAC.SetMaxLength( 6 ) 
+		bSizer15.Add( self.textCtrl_MAC, 1, wx.EXPAND|wx.BOTTOM|wx.RIGHT|wx.LEFT, 5 )
+		
+		
+		SNAPpPad_sbSizer.Add( bSizer15, 1, wx.EXPAND, 5 )
+		
+		bSizer16 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.btn_TestConnection = wx.Button( self.library_Panel, wx.ID_ANY, u"Test Connection", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer16.Add( self.btn_TestConnection, 0, wx.ALL|wx.EXPAND, 0 )
+		
+		self.txt_Confirm = wx.StaticText( self.library_Panel, wx.ID_ANY, u"Not Connected", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.txt_Confirm.Wrap( -1 )
+		self.txt_Confirm.SetForegroundColour( wx.Colour( 255, 0, 0 ) )
+		
+		bSizer16.Add( self.txt_Confirm, 1, wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.LEFT, 5 )
+		
+		
+		SNAPpPad_sbSizer.Add( bSizer16, 1, wx.EXPAND, 5 )
+		
+		
+		bSizer14.Add( SNAPpPad_sbSizer, 0, wx.EXPAND, 5 )
+		
+		
+		self.library_Panel.SetSizer( bSizer14 )
 		self.library_Panel.Layout()
-		library_sbSizer.Fit( self.library_Panel )
+		bSizer14.Fit( self.library_Panel )
 		workspace_Sizer.Add( self.library_Panel, 1, wx.EXPAND |wx.ALL, 5 )
 		
 		central_Sizer = wx.BoxSizer( wx.VERTICAL )
@@ -164,13 +204,21 @@ class mainFrame ( wx.Frame ):
 		
 		resetPosition_rBoxChoices = [ u"Cornered", u"Midscreen", u"Corner" ]
 		self.resetPosition_rBox = wx.RadioBox( self, wx.ID_ANY, u"Position", wx.DefaultPosition, wx.DefaultSize, resetPosition_rBoxChoices, 1, wx.RA_SPECIFY_COLS )
-		self.resetPosition_rBox.SetSelection( 1 )
+		self.resetPosition_rBox.SetSelection( 0 )
 		resetTools_sbSizer.Add( self.resetPosition_rBox, 1, wx.ALIGN_CENTER_HORIZONTAL|wx.EXPAND|wx.RIGHT|wx.LEFT, 2 )
 		
 		
 		tools_Sizer.Add( resetTools_sbSizer, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		comboTools_sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Combo Tools" ), wx.VERTICAL )
+		
+		bSizer17 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.btn_SendCombo = wx.Button( self, wx.ID_ANY, u"Send Combo", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer17.Add( self.btn_SendCombo, 0, wx.ALIGN_CENTER_VERTICAL|wx.EXPAND|wx.RIGHT|wx.LEFT, 2 )
+		
+		
+		comboTools_sbSizer.Add( bSizer17, 1, wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL, 0 )
 		
 		bSizer34 = wx.BoxSizer( wx.HORIZONTAL )
 		
@@ -222,6 +270,8 @@ class mainFrame ( wx.Frame ):
 		
 		activeSuiteChoices = []
 		self.activeSuite = wx.CheckListBox( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, activeSuiteChoices, 0 )
+		self.activeSuite.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 90, False, "Open Sans" ) )
+		
 		mixupWindow_Sizer.Add( self.activeSuite, 1, wx.ALIGN_CENTER_HORIZONTAL|wx.EXPAND|wx.RIGHT|wx.LEFT, 2 )
 		
 		self.btn_StartMixupTraining = wx.Button( self, wx.ID_ANY, u"Start Mixup Training", wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -236,17 +286,17 @@ class mainFrame ( wx.Frame ):
 		
 		workspace_Sizer.Add( central_Sizer, 1, wx.EXPAND, 5 )
 		
-		activeCombo_sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Active Combo" ), wx.VERTICAL )
+		activeCombo_sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Active Combo" ), wx.HORIZONTAL )
 		
-		self.activeCombo = wx.grid.Grid( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.activeCombo = wx.grid.Grid( self, wx.ID_ANY, wx.Point( -1,-1 ), wx.Size( -1,-1 ), 0 )
 		
 		# Grid
-		self.activeCombo.CreateGrid( 255, 1 )
+		self.activeCombo.CreateGrid( 123, 1 )
 		self.activeCombo.EnableEditing( True )
 		self.activeCombo.EnableGridLines( True )
-		self.activeCombo.SetGridLineColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_MENU ) )
+		self.activeCombo.SetGridLineColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_APPWORKSPACE ) )
 		self.activeCombo.EnableDragGridSize( False )
-		self.activeCombo.SetMargins( 10, 0 )
+		self.activeCombo.SetMargins( 0, 0 )
 		
 		# Columns
 		self.activeCombo.EnableDragColMove( False )
@@ -263,11 +313,13 @@ class mainFrame ( wx.Frame ):
 		# Label Appearance
 		
 		# Cell Defaults
-		self.activeCombo.SetDefaultCellAlignment( wx.ALIGN_LEFT, wx.ALIGN_TOP )
+		self.activeCombo.SetDefaultCellBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
+		self.activeCombo.SetDefaultCellFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 90, False, "Open Sans" ) )
+		self.activeCombo.SetDefaultCellAlignment( wx.ALIGN_CENTRE, wx.ALIGN_TOP )
 		activeCombo_sbSizer.Add( self.activeCombo, 1, wx.ALL|wx.EXPAND, 0 )
 		
 		
-		workspace_Sizer.Add( activeCombo_sbSizer, 0, wx.EXPAND, 5 )
+		workspace_Sizer.Add( activeCombo_sbSizer, 1, wx.EXPAND, 5 )
 		
 		
 		mainFrame_Sizer.Add( workspace_Sizer, 1, wx.EXPAND, 5 )
@@ -289,18 +341,21 @@ class mainFrame ( wx.Frame ):
 		
 		self.SetSizer( mainFrame_Sizer )
 		self.Layout()
-		self.m_statusBar7 = self.CreateStatusBar( 1, wx.ST_SIZEGRIP, wx.ID_ANY )
+		self.statusBar = self.CreateStatusBar( 1, wx.ST_SIZEGRIP, wx.ID_ANY )
 		
 		self.Centre( wx.BOTH )
 		
 		# Connect Events
+		self.Bind( wx.EVT_IDLE, self.OnIdle )
 		self.Bind( wx.EVT_MENU, self.OnExit, id = self.m_file_exit.GetId() )
 		self.Bind( wx.EVT_MENU, self.toggleConsole, id = self.view_ShowConsole.GetId() )
 		self.Bind( wx.EVT_MENU, self.toggleLibrary, id = self.view_ShowLibrary.GetId() )
 		self.library.Bind( wx.EVT_TREE_ITEM_ACTIVATED, self.clickLibrary )
+		self.btn_TestConnection.Bind( wx.EVT_BUTTON, self.testConnection )
 		self.btn_SetTestFrame.Bind( wx.EVT_BUTTON, self.setTestFrame )
 		self.btn_StartRangeTesting.Bind( wx.EVT_BUTTON, self.startRangeTest )
 		self.btn_Reset.Bind( wx.EVT_BUTTON, self.reset )
+		self.btn_SendCombo.Bind( wx.EVT_BUTTON, self.sendActiveCombo )
 		self.btn_RunCombo.Bind( wx.EVT_BUTTON, self.runCombo )
 		self.btn_ClearComboInput.Bind( wx.EVT_BUTTON, self.clearCombo )
 		self.btn_AddComboToSuite.Bind( wx.EVT_BUTTON, self.addToSuite )
@@ -308,12 +363,17 @@ class mainFrame ( wx.Frame ):
 		self.btn_clearSuite.Bind( wx.EVT_BUTTON, self.clearSuite )
 		self.btn_SaveSuiteAs.Bind( wx.EVT_BUTTON, self.saveSuiteAs )
 		self.activeSuite.Bind( wx.EVT_LISTBOX_DCLICK, self.clickSuite )
+		self.btn_StartMixupTraining.Bind( wx.EVT_BUTTON, self.startMixupTraining )
+		self.activeCombo.Bind( wx.grid.EVT_GRID_CELL_LEFT_CLICK, self.rangeFrameCheck )
 	
 	def __del__( self ):
 		pass
 	
 	
 	# Virtual event handlers, overide them in your derived class
+	def OnIdle( self, event ):
+		event.Skip()
+	
 	def OnExit( self, event ):
 		event.Skip()
 	
@@ -326,6 +386,9 @@ class mainFrame ( wx.Frame ):
 	def clickLibrary( self, event ):
 		event.Skip()
 	
+	def testConnection( self, event ):
+		event.Skip()
+	
 	def setTestFrame( self, event ):
 		event.Skip()
 	
@@ -333,6 +396,9 @@ class mainFrame ( wx.Frame ):
 		event.Skip()
 	
 	def reset( self, event ):
+		event.Skip()
+	
+	def sendActiveCombo( self, event ):
 		event.Skip()
 	
 	def runCombo( self, event ):
@@ -354,6 +420,12 @@ class mainFrame ( wx.Frame ):
 		event.Skip()
 	
 	def clickSuite( self, event ):
+		event.Skip()
+	
+	def startMixupTraining( self, event ):
+		event.Skip()
+	
+	def rangeFrameCheck( self, event ):
 		event.Skip()
 	
 
