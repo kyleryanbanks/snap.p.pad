@@ -72,20 +72,22 @@ BUTTON_LIST = (PUNCH1, PUNCH2, PUNCH3, PUNCH4, KICK1, KICK2, KICK3,
 #---------------------------
 
 @setHook(HOOK_STARTUP)
+def _init():
+    global combo_buf
+    saveNvParam(11, 0x011F)
+    combo_buf = "\x00" * 126
+    playback_mode()
+    _init_frame_timer()
+    
 def playback_mode():
-    global board_mode, combo_buf
-    combo_blank_1 = "\x00" * 63
-    combo_blank_2 = "\x00" * 63
-    combo_buf = combo_blank_1 + combo_blank_2
-    board_mode = OUTPUT
+    global board_mode
     #Setting all sensor lines to High Outputs
+    board_mode = OUTPUT
     x=0
     while x < len(BUTTON_LIST):
         setPinDir(BUTTON_LIST[x], True)
         writePin(BUTTON_LIST[x], True)
         x = x + 1
-
-    _init_frame_timer()
 
 def passthrough_mode():
     global board_mode
@@ -97,7 +99,6 @@ def passthrough_mode():
         
 def record_combo():
     global combo_buf
-    
     if board_mode == INPUT:
         combo_buf = ""
         waiting_for_user_input = True
@@ -106,7 +107,6 @@ def record_combo():
         Port_E = 0xFF
         input_count = 0
         frame_delay = 0
-        
         while waiting_for_user_input:
             Peek_F = peek(PORT_F_INPUT)
             Peek_E = peek(PORT_E_INPUT)
@@ -115,10 +115,8 @@ def record_combo():
                 Port_F = Peek_F
                 Port_E = Peek_E
                 _reset_timer()
-
                 waiting_for_user_input = False
                 input_count = input_count + 1
-                
         while recording_combo:
             if peek(OCF1A) & 2:
                 poke(OCF1A, 14)
@@ -137,9 +135,8 @@ def record_combo():
                 elif frame_delay >= 255:
                     combo_buf = combo_buf + "\x01\xFF\xFF\x00"
                     recording_combo = False
-                    
+        comboFromSNAPpPad()
         playback_mode()
-
 
 #---------------------------------------
 #  READ / WRITE / XMIT / RCV Functions *
@@ -152,23 +149,20 @@ def _spoke(index, val):
     global combo_buf
     combo_buf = combo_buf[:index] + chr(val) + combo_buf[index + 1:]
 
-def comboFromGUI(combo, index):
+def comboToSNAPpPad(combo, index):
     global combo_buf
     if index == 0:
         clearComboBuf()
-        print "combo: ", combo
         byte = 0
         while byte < len(combo):
             _spoke(byte, _speek(combo, byte))
             byte = byte + 1
-        rpc(GUI, "sendNext")
-        print "Combo_buf: ", combo_buf
     else:
         byte = 0
         while byte < len(combo):
             _spoke(byte+64, _speek(combo, byte))
             byte = byte + 1
-        print "Combo_buf: ", combo_buf
+    return 0
         
 def clearComboBuf():
     byte = 0
@@ -176,24 +170,24 @@ def clearComboBuf():
         _spoke(byte, 0)
         byte = byte + 1
     
-
-def _update_Range_Frame(rangeFrame, val):
+def update_Range_Frame(rangeFrame, val):
     global combo_buf
-    index = rangeFrame * 3
+    index = (rangeFrame * 3) + 3
     _spoke(index, val)
+    return True
 
-def comboToGUI():
+def comboFromSNAPpPad():
     print "combo_buf: ", combo_buf
     if len(combo_buf) > 60:
         combo1 = combo_buf[:60]
         combo2 = combo_buf[60:]
-        rpc(GUI, 'comboToGUI', combo1, 1)
-        rpc(GUI, 'comboToGUI', combo2, 0)
+        rpc(GUI, 'comboFromSNAPpPad', combo1, 1)
+        rpc(GUI, 'comboFromSNAPpPad', combo2, 0)
     else:
-        rpc(GUI, 'comboToGUI', combo_buf, 0)
+        rpc(GUI, 'comboFromSNAPpPad', combo_buf, 0)
 
 def confirm_com():
-    rpc(GUI, "SNAPpPadConfirm")
+    return True
 
 #---------------------------
 # Hardware Timer Functions #
@@ -216,12 +210,20 @@ def _reset_timer():
 #  Basic Combo Functions   #
 #---------------------------
 
+def PressButton(Port, Command):
+    if Port == "B":
+        poke(PORT_B, Command)
+    if Port == "F":
+        poke(PORT_F, Command)
+    if Port == "E":
+        poke(PORT_E, Command)
+        
 # Reset Codes (Port E|Port B|Delay)
-RESET_BACK = "\x9F\xEF\x05\xFF\xFF\x26\xFF\xFF\x00"
-RESET_MID = "\x9F\xFF\x05\xFF\xFF\x26\xFF\xFF\x00"
-RESET_CORNER = "\x9F\xDF\x05\xFF\xFF\x26\xFF\xFF\x00"
+RESET_BACK = "\xEF\x3F\x05\xFF\xFF\x00"
+RESET_MID = "\xFF\x3F\x05\xFF\xFF\x00"
+RESET_FRONT = "\xDF\x3F\x05\xFF\xFF\x00"
 
-RESET_POSITION_LIST = (RESET_BACK, RESET_MID, RESET_CORNER)
+RESET_POSITION_LIST = (RESET_BACK, RESET_MID, RESET_FRONT)
 
 def reset_training_mode(position):
     index = 0
@@ -244,7 +246,7 @@ def reset_training_mode(position):
             index = index + 1
             s_index = index * 3
     call(ENABLE_INTERRUPT)
-    return True
+    return 2
 
 def run_combo():
     running_combo = True
@@ -274,23 +276,7 @@ def run_combo():
             index = index + 1
             s_index = index * 3
     call(ENABLE_INTERRUPT)
-    return True
-
-def run_combo_debug_pokeless():
-    print 'Attempting to run combo: ', combo_buf
-    index = 0
-    s_index = index * 3
-    running = True
-    while running:
-        print 'poking E: ', _speek(combo_buf, s_index)
-        print 'poking F: ', _speek(combo_buf, s_index+1)
-        print 'Frame Delay: ', _speek(combo_buf, s_index+2)
-        frame_delay = _speek(combo_buf, s_index+2)
-        if frame_delay == 0:
-            running = False
-        index = index + 1
-        s_index = index * 3
-    
+    return 1
 
 def run_combo_debug():
     print 'Attempting to run combo: ', combo_buf

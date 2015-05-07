@@ -74,6 +74,9 @@ class mainFrame ( wx.Frame ):
 		self.view_ShowLibrary = wx.MenuItem( self.view, wx.ID_ANY, u"Show/Hide Library", wx.EmptyString, wx.ITEM_NORMAL )
 		self.view.AppendItem( self.view_ShowLibrary )
 		
+		self.view_ShowManual = wx.MenuItem( self.view, wx.ID_ANY, u"Show Manual Ctrl", wx.EmptyString, wx.ITEM_NORMAL )
+		self.view.AppendItem( self.view_ShowManual )
+		
 		self.menuBar.Append( self.view, u"View" ) 
 		
 		self.help = wx.Menu()
@@ -109,7 +112,7 @@ class mainFrame ( wx.Frame ):
 		self.m_staticText5.Wrap( -1 )
 		bSizer15.Add( self.m_staticText5, 0, wx.ALIGN_CENTER_VERTICAL|wx.BOTTOM|wx.RIGHT|wx.LEFT, 5 )
 		
-		self.textCtrl_MAC = wx.TextCtrl( self.library_Panel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.textCtrl_MAC = wx.TextCtrl( self.library_Panel, wx.ID_ANY, u"5f6f94", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.textCtrl_MAC.SetMaxLength( 6 ) 
 		bSizer15.Add( self.textCtrl_MAC, 1, wx.EXPAND|wx.BOTTOM|wx.RIGHT|wx.LEFT, 5 )
 		
@@ -350,6 +353,7 @@ class mainFrame ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.OnExit, id = self.m_file_exit.GetId() )
 		self.Bind( wx.EVT_MENU, self.toggleConsole, id = self.view_ShowConsole.GetId() )
 		self.Bind( wx.EVT_MENU, self.toggleLibrary, id = self.view_ShowLibrary.GetId() )
+		self.Bind( wx.EVT_MENU, self.showManualCtrl, id = self.view_ShowManual.GetId() )
 		self.library.Bind( wx.EVT_TREE_ITEM_ACTIVATED, self.clickLibrary )
 		self.btn_TestConnection.Bind( wx.EVT_BUTTON, self.testConnection )
 		self.btn_SetTestFrame.Bind( wx.EVT_BUTTON, self.setTestFrame )
@@ -381,6 +385,9 @@ class mainFrame ( wx.Frame ):
 		event.Skip()
 	
 	def toggleLibrary( self, event ):
+		event.Skip()
+	
+	def showManualCtrl( self, event ):
 		event.Skip()
 	
 	def clickLibrary( self, event ):
@@ -469,5 +476,136 @@ class addToSuiteDialog ( wx.Dialog ):
 	
 	def __del__( self ):
 		pass
+	
+
+###########################################################################
+## Class Manual_Input
+###########################################################################
+
+class Manual_Input ( wx.Dialog ):
+	
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Manual Input", pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
+		
+		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
+		
+		bSizer19 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		gSizer4 = wx.GridSizer( 3, 3, 0, 0 )
+		
+		
+		gSizer4.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.btn_Up = wx.Button( self, wx.ID_ANY, u"Up", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer4.Add( self.btn_Up, 0, wx.ALL, 0 )
+		
+		
+		gSizer4.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.btn_Left = wx.Button( self, wx.ID_ANY, u"Left", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer4.Add( self.btn_Left, 0, wx.ALL, 0 )
+		
+		
+		gSizer4.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.btn_Right = wx.Button( self, wx.ID_ANY, u"Right", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer4.Add( self.btn_Right, 0, wx.ALL, 0 )
+		
+		
+		gSizer4.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.btn_Down = wx.Button( self, wx.ID_ANY, u"Down", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer4.Add( self.btn_Down, 0, wx.ALL, 0 )
+		
+		
+		gSizer4.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		
+		bSizer19.Add( gSizer4, 1, wx.EXPAND, 5 )
+		
+		gSizer5 = wx.GridSizer( 2, 3, 0, 0 )
+		
+		self.bnt_P1 = wx.Button( self, wx.ID_ANY, u"P1", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer5.Add( self.bnt_P1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 0 )
+		
+		self.btn_P2 = wx.Button( self, wx.ID_ANY, u"P2", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer5.Add( self.btn_P2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 0 )
+		
+		self.btn_P3 = wx.Button( self, wx.ID_ANY, u"P3", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer5.Add( self.btn_P3, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 0 )
+		
+		self.btn_K1 = wx.Button( self, wx.ID_ANY, u"K1", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer5.Add( self.btn_K1, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 0 )
+		
+		self.btn_K2 = wx.Button( self, wx.ID_ANY, u"K2", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer5.Add( self.btn_K2, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 0 )
+		
+		self.btn_K3 = wx.Button( self, wx.ID_ANY, u"K3", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer5.Add( self.btn_K3, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 0 )
+		
+		
+		bSizer19.Add( gSizer5, 1, wx.EXPAND, 5 )
+		
+		
+		self.SetSizer( bSizer19 )
+		self.Layout()
+		bSizer19.Fit( self )
+		
+		self.Centre( wx.BOTH )
+		
+		# Connect Events
+		self.btn_Up.Bind( wx.EVT_BUTTON, self.up )
+		self.btn_Up.Bind( wx.EVT_LEFT_DOWN, self.up )
+		self.btn_Up.Bind( wx.EVT_LEFT_UP, self.release )
+		self.btn_Left.Bind( wx.EVT_BUTTON, self.left )
+		self.btn_Left.Bind( wx.EVT_LEFT_DOWN, self.left )
+		self.btn_Right.Bind( wx.EVT_BUTTON, self.right )
+		self.btn_Down.Bind( wx.EVT_BUTTON, self.down )
+		self.bnt_P1.Bind( wx.EVT_BUTTON, self.p1 )
+		self.btn_P2.Bind( wx.EVT_BUTTON, self.p2 )
+		self.btn_P3.Bind( wx.EVT_BUTTON, self.p3 )
+		self.btn_K1.Bind( wx.EVT_BUTTON, self.k1 )
+		self.btn_K2.Bind( wx.EVT_BUTTON, self.k2 )
+		self.btn_K3.Bind( wx.EVT_BUTTON, self.k3 )
+	
+	def __del__( self ):
+		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def up( self, event ):
+		event.Skip()
+	
+	
+	def release( self, event ):
+		event.Skip()
+	
+	def left( self, event ):
+		event.Skip()
+	
+	
+	def right( self, event ):
+		event.Skip()
+	
+	def down( self, event ):
+		event.Skip()
+	
+	def p1( self, event ):
+		event.Skip()
+	
+	def p2( self, event ):
+		event.Skip()
+	
+	def p3( self, event ):
+		event.Skip()
+	
+	def k1( self, event ):
+		event.Skip()
+	
+	def k2( self, event ):
+		event.Skip()
+	
+	def k3( self, event ):
+		event.Skip()
 	
 
