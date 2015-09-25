@@ -7,9 +7,9 @@ combos manually to the SNAP engine.
 
 The combos will exist in lists and contain 3 pieces: direction, button, and frame.
 
-Direction will acception numpad notation and text format (U, D, DB, UF, etc.)
+Direction will accept numpad notation and text format (U, D, DB, UF, etc.)
 Text inputs will be given with the assumption the combo will be executed from the 
-P1 side of the screen. (DB = DL = 1, RF = RR = 9, etc.)
+P1 side of the screen. (DB = DL = 1, UF = UR = 9, etc.)
 
 Buttons will accept LMHSAB as input and can have multiple buttons, the tool will
 automatically calculate the hex-code for all buttons pressed.  When a button is
@@ -21,209 +21,215 @@ will need to create a 2nd empty frame after to wait additional frames.
 I will be using dictionaries to house most of the input definitions.
 
 I will also be implementing shortcuts for common commands (QCF, DP, etc.) The format
-will be: Shorcut, button to be pressed with last direction, frames to wait after button
+will be: Shortcut, button to be pressed with last direction, frames to wait after button
 In these situations, the system will assume you want 1 frame of wait for all inputs
 and place the button press on the same frame as the last direction in the input.
 """
 
-import sys, getopt
+import sys
+import getopt
+import re
 
-DIRECTIONS ={"4" : "\xEF",
-             "1" : "\xEE",
-             "2" : "\xFE",
-             "3" : "\xDE",
-             "6" : "\xDF",
-             "9" : "\xDD",
-             "8" : "\xFD",
-             "7" : "\xED",
-             "B" : "\xEF",
-             "DB" : "\xEE",
-             "D" : "\xFE",
-             "DF" : "\xDE",
-             "F" : "\xDF",
-             "UF" : "\xDD",
-             "U" : "\xFD",
-             "UB" : "\xED",
-             "b" : "\xEF",
-             "db" : "\xEE",
-             "d" : "\xFE",
-             "df" : "\xDE",
-             "f" : "\xDF",
-             "uf" : "\xDD",
-             "u" : "\xFD",
-             "ub" : "\xED",
-             "x" : "\xFF",
-             "X" : "\xFF",
-             }
+BUTTONS = {"L": 0xFE,
+           "M": 0xFD,
+           "H": 0xFB,
+           "P": 0xF7,
+           "S": 0xEF,
+           "K": 0x7F,
+           "A": 0xDF,
+           "B": 0xBF,
+           "l": 0xFE,
+           "m": 0xFD,
+           "h": 0xFB,
+           "p": 0xF7,
+           "s": 0xEF,
+           "k": 0x7F,
+           "a": 0xDF,
+           "b": 0xBF,
+           "1": 0xDF,
+           "2": 0xBF,
+           "x": 0xFF,
+           "X": 0xFF,
+           }
 
-BUTTONS = {"L" : "\x7F",
-           "M" : "\xBF",
-           "H" : "\xDF",
-           "4P" : "\xEF",
-           "S" : "\xFB",
-           "A1" : "\xFD",
-           "A2" : "\xFE",
-           "4K" : "\xFB",
-           "A" : "\xFD",
-           "B" : "\xFE",
-           "1" : "\xFD",
-           "2" : "\xFE",
-           "l" : "\x7F",
-           "m" : "\xBF",
-           "h" : "\xDF",
-           "4p" : "\xEF",
-           "s" : "\xFB",
-           "a1" : "\xFD",
-           "a2" : "\xFE",
-           "4k" : "\xFB",
-           "a" : "\xFD",
-           "b" : "\xFE",
-           "1" : "\xFD",
-           "2" : "\xFE",
-           "x" : "\xFF",
-           "X" : "\xFF",
-           } 
+DIRECTIONS = {"4": "\x7F",
+              "1":  "\x3F",
+              "2": "\xBF",
+              "3":  "\x9F",
+              "6": "\xDF",
+              "9":  "\xCF",
+              "8": "\xEF",
+              "7":  "\x6F",
+              "B": "\x7F",
+              "DB": "\x3F",
+              "D": "\xBF",
+              "DF": "\x9F",
+              "F": "\xDF",
+              "UF": "\xCF",
+              "U": "\xEF",
+              "UB": "\x6F",
+              "b": "\x7F",
+              "db": "\x3F",
+              "d": "\xBF",
+              "df": "\x9F",
+              "f": "\xDF",
+              "uf": "\xCF",
+              "u": "\xEF",
+              "ub": "\x6F",
+              "x": "\xFF",
+              "X": "\xFF",
+              }
 
-SHORTCUTS = {"QCF": "\xFE\xFF\x01\xDE\xFF\x01\xDF",
-             "QCB": "\xFE\xFF\x01\xEE\xFF\x01\xEF",
-             "HCF": "\xEF\xFF\x01\xEE\xFF\x01\xFE\xFF\x01\xDE\xFF\x01\xDF",
-             "HCB": "\xDF\xFF\x01\xDE\xFF\x01\xFE\xFF\x01\xEE\xFF\x01\xEF",
-             "DPF": "\xDF\xFF\x01\xFE\xFF\x01\xDE",
-             "DPB": "\xEF\xFF\x01\xFE\xFF\x01\xEE",
-             "MBF": "\xFD\xFF\x01\xDD\xFF\x01\xDF",
-             "MBB": "\xFD\xFF\x01\xED\xFF\x01\xEF",
-             "qcf": "\xFE\xFF\x01\xDE\xFF\x01\xDF",
-             "qcb": "\xFE\xFF\x01\xEE\xFF\x01\xEF",
-             "hcf": "\xEF\xFF\x01\xEE\xFF\x01\xFE\xFF\x01\xDE\xFF\x01\xDF",
-             "hcb": "\xDF\xFF\x01\xDE\xFF\x01\xFE\xFF\x01\xEE\xFF\x01\xEF",
-             "dpf": "\xDF\xFF\x01\xFE\xFF\x01\xDE",
-             "dpb": "\xEF\xFF\x01\xFE\xFF\x01\xEE",
-             "mbf": "\xFD\xFF\x01\xDD\xFF\x01\xDF",
-             "mbb": "\xFD\xFF\x01\xED\xFF\x01\xEF",
-             "sj": "\xFE\xFF\x03\xFD",
-             "SJ": "\xFE\xFF\x03\xFD",
-             "sjuf": "\xFE\xFF\x03\xDD",
-             "SJUF": "\xFE\xFF\x03\xDD",
-             "sjub": "\xFE\xFF\x03\xED",
-             "SJUB": "\xFE\xFF\x03\xED"
+SHORTCUTS = {"QCF": "\xDF\xFF\x01\x9F\xFF\x01\xBF",
+             "QCB": "\xDF\xFF\x01\xCF\xFF\x01\xEF",
+             "HCF": "\xEF\xFF\x01\xCF\xFF\x01\xDF\xFF\x01\x9F\xFF\x01\xBF",
+             "HCB": "\xBF\xFF\x01\x9E\xFF\x01\xDE\xFF\x01\xCF\xFF\x01\xEF",
+             "DPF": "\xBF\xFF\x01\xDF\xFF\x01\x9F",
+             "DPB": "\xBF\xFF\x01\xDF\xFF\x01\xCF",
+             "MBF": "\x7F\xFF\x01\x3F\xFF\x01\xBF",
+             "MBB": "\x7F\xFF\x01\x6F\xFF\x01\xEF",
+             "qcf": "\xDF\xFF\x01\x9F\xFF\x01\xBF",
+             "qcb": "\xDF\xFF\x01\xCF\xFF\x01\xEF",
+             "hcf": "\xEF\xFF\x01\xCF\xFF\x01\xDF\xFF\x01\x9F\xFF\x01\xBF",
+             "hcb": "\xBF\xFF\x01\x9E\xFF\x01\xDE\xFF\x01\xCF\xFF\x01\xEF",
+             "dpf": "\xBF\xFF\x01\xDF\xFF\x01\x9F",
+             "dpb": "\xBF\xFF\x01\xDF\xFF\x01\xCF",
+             "mbf": "\xEF\xFF\x01\xCF\xFF\x01\xDF",
+             "mbb": "\xEF\xFF\x01\x6F\xFF\x01\x7F",
+             "sj": "\xBF\xFF\x03\xEF",
+             "SJ": "\xBF\xFF\x03\xEF",
+             "sjuf": "\xBF\xFF\x03\xCF",
+             "SJUF": "\xBF\xFF\x03\xCF",
+             "sjub": "\xBF\xFF\x03\x6F",
+             "SJUB": "\xBF\xFF\x03\x6F"
              }
 
 hex_combo_list = []
-imported_combo_list = []
+combo_list_1 = []
+combo_list_2 = []
 comment_list = []
 
 combo_file = ''
 output_file = ''
 
+
 def main(argv):
     global combo_file, output_file
     try:
-       opts, args = getopt.getopt(argv,"hc:o:",["cfile=","ofile="])
+        opts, args = getopt.getopt(argv, "hc:o:", ["cfile=", "ofile="])
     except getopt.GetoptError:
-       print 'Python Combo_Converter.py -c <combo_file> -o <output_file>'
-       sys.exit(2)
+        print 'Python Combo_Converter.py -c <combo_file> -o <output_file>'
+        sys.exit(2)
     for opt, arg in opts:
-       if opt == "-h":
-          print 'Python Combo_Converter.py -c <combo_file> -o <output_file>'
-          sys.exit()
-       elif opt in ("-c", "--cfile"):
-          combo_file = arg
-       elif opt in ("-o", "--ofile"):
-          output_file = arg
-    
-    import_combo_lib(combo_file)
-    build_hex_combo()
-    export_combo_lib(output_file)
+        if opt == "-h":
+            print 'Python Combo_Converter.py -c <combo_file> -o <output_file>'
+            sys.exit()
+        elif opt in ("-c", "--cfile"):
+            combo_file = arg
+        elif opt in ("-o", "--ofile"):
+            output_file = arg
 
-def import_combo_lib(combo_file):
-    if combo_file == '':
-        combo_file = 'combo.txt'
-    with open(combo_file, 'r') as f:
-        combo = []
-        frame = []
-        command = ''
+    export_combo_lib(combo_file, output_file)
+
+def import_library(fn):
+    command_search = re.compile(r"/(\w+)\.(\w+)\.(\w+)/")
+
+    if fn == "":
+        fn = 'combo.txt'
+
+    comment = None
+    p1_combo = []
+    p2_combo = []
+    with open(fn, 'r') as f:
         for line in f:
-            line = line.rstrip('\n')
-            #print 'Line after strip:', repr(line)
-            for char in line:
-                #print char
-                if char == '#':
-                    #print 'comment line, append combo if one is being held'
-                    comment_list.append(line)
-                    if combo:
-                      imported_combo_list.append(combo)
-                      combo = []
-                    break
-                elif char == ".":
-                    #print 'append command to frame and reset'
-                    frame.append(command)
-                    command = ''
-                elif char == '/':
-                    #print 'check if starting/ending a frame, append and reinit as needed'
-                    if command:
-                      frame.append(int(command))
-                      combo.append(frame)
-                    command = ''
-                    frame = []
-                elif char == ' ':
-                    pass
-                else:
-                    #print 'adding char to command'
-                    command = command + char
-        if combo:
-            imported_combo_list.append(combo)
+            if line.startswith("#"):
+                if comment:
+                    yield comment, p1_combo, p2_combo
+                comment = line.strip()
+                p1_combo = []
+                p2_combo = []
+            elif line.startswith("1"):
+                p1_combo = command_search.findall(line)
+            elif line.startswith("2"):
+                p2_combo = command_search.findall(line)
+            else:
+                p1_combo = command_search.findall(line)
+    if comment is not None:
+        yield comment, p1_combo, p2_combo
 
-def export_combo_lib(output_file):
+def generate_hex(combo_list):
+    triplet_search = re.compile("(.)(.)(.)")
+
+    hex_combo = ""
+    for move, button, delay in combo_list:
+        if move in SHORTCUTS:
+            hex_combo += SHORTCUTS[move]
+        else:
+            hex_combo += DIRECTIONS[move]
+
+        empty_button = 0xFF
+        for char_button in button:
+            empty_button &= BUTTONS[char_button]
+        hex_combo += chr(empty_button)
+
+        if delay == '0':
+            input_count = (len(hex_combo) + 1) / 3
+            hex_combo = '\xFF\xFF' + chr(input_count) + hex_combo + chr(1)
+        else:
+            hex_combo += chr(int(delay))
+
+    for move, button, delay in triplet_search.findall(hex_combo):
+            for i in xrange(ord(delay)):
+                yield move + button #+ chr(1)
+
+def generate_byte_strings(p1_combo, p2_combo):
+    p1_gen = generate_hex(p1_combo)
+    p2_gen = generate_hex(p2_combo)
+    current = prev = None
+    count = 1
+    p1_running = p2_running = True
+    while p1_running or p2_running:
+        p1_pair = "\xFF\xFF"
+        if p1_running:
+            try:
+                p1_pair = p1_gen.next()
+            except StopIteration:
+                p1_running = False
+
+        p2_pair = "\xFF\xFF"
+        if p2_running:
+            try:
+                p2_pair = p2_gen.next()
+            except StopIteration:
+                p2_running = False
+
+        current = p1_pair + p2_pair
+        if current == prev:
+            count += 1
+        elif prev:
+            yield prev + chr(count)
+            count = 1
+
+        prev = current
+
+    yield "\xFF\xFF\xFF\xFF\x00"
+
+def compile_final_hex(fn):
+    for comment, p1_combo, p2_combo in import_library(fn):
+        yield comment, "".join(generate_byte_strings(p1_combo, p2_combo))
+
+def export_combo_lib(input_filename, output_file):
     if output_file == '':
-      output_file = 'combo_output.txt'
+        output_file = 'combo_output.txt'
     with open(output_file, 'a+') as f:
-        mixup_count = 0
-        code_line = []
-        for line in hex_combo_list:
-          header = 'MIXUP_%s = ' % mixup_count
-          next_line = header + "'%s'" %line
-          code_line.append(next_line)
-          mixup_count += 1
-          if mixup_count > 7:
-            mixup_count = 0
-
         f.write('\nCode for SNAPpPad Core\n\n')
-        output = zip(comment_list, code_line)
-        for pairs in output:
-            for line in pairs:
-              f.write(line)
-              f.write("\n")
+        for count, (comment, string) in enumerate(compile_final_hex(input_filename)):
+            # f.write("%s\nMIXUP_%d = ['%s']\n" % (comment, count, "".join(r"\x%02x" % ord(i) for i in string)))
+            f.write("%s\nMIXUP_%d = [%s]\n" % (comment, count, ",".join("%d" % ord(i) for i in string)))
 
-
-def build_hex_combo():
-    for combo in imported_combo_list:
-        #init new combo string
-        hex_combo = ""
-        for frame in combo:
-            #Shorcut handling check
-            if frame[0] in SHORTCUTS:
-                hex_combo = hex_combo + SHORTCUTS[frame[0]]
-            else:
-                hex_combo = hex_combo + DIRECTIONS[frame[0]]
-            #Multiple buttons check
-            if len(frame[1]) > 1:
-                hex_buttons = '\xFF'
-                for button in frame[1]:
-                    hex_buttons = ord(hex_buttons) & ord(BUTTONS[button])
-                    hex_buttons = chr(hex_buttons)
-                hex_combo = hex_combo + str(hex_buttons)
-            else:
-                hex_combo = hex_combo + BUTTONS[(frame[1])]
-            #Add Frame Value
-            #If frame count is 0, add range counter tag to front of combo.
-            if frame[2] == 0:
-              input_count = (len(hex_combo)+1)/3
-              hex_combo = '\xFF\xFF' + chr(input_count) + hex_combo + chr(1)
-            else:
-              hex_combo = hex_combo + chr(frame[2])
-        hex_combo = hex_combo + '\xFF\xFF\x00'
-        hex_combo_list.append("".join([r"\x%02x" % ord(i) for i in hex_combo]))
-        #print repr(hex_combo_list)
+def output_hex(filename):
+    return "".join(r"\x%02x" % i for i in compile_final_hex(filename))
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+
